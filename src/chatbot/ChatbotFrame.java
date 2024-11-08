@@ -30,6 +30,7 @@ public class ChatbotFrame extends javax.swing.JFrame {
     String []historial;
     String indice;
     String[] conversacion;
+    String[] respuestaFragmentada;
     public static String palabra="";
     boolean palabraset = false;//Booleano palabra establecida
     boolean praentrada = true; // Booleano primera entrada
@@ -320,32 +321,8 @@ in.close();
 
 boolean esPrimeraLinea = true;
 
-// Analiza la respuesta JSON e imprime el campo response"
-JSONObject jsonResponse = new JSONObject(response.toString());
-String responseText = jsonResponse.getString("response");
-//Fragmenta la respuesta a 120 caracteres
-String[] respuestaFragmentada = fragmentarTexto(responseText, 110);
-if(code==HttpURLConnection.HTTP_OK){
 
-// Asigna cada línea fragmentada al vector del JList
-for (String linea : respuestaFragmentada) {
-    // Encuentra la primera posición vacía en el vector 'imput'
-    for (int i = 0; i < imput.length; i++) {
-        if (imput[i] == null) {
-            if (esPrimeraLinea) {
-                imput[i] = "Ollama: " + linea;
-                esPrimeraLinea = false; // Cambia el indicador para evitar que se agregue de nuevo
-            } else {
-                imput[i] = linea;
-    }
-            
-            break;
-}
-    }
-}
-
-}
-
+    respuestaFragmentada=analizarResponseJson(esPrimeraLinea,response,imput,code);
     jList2.setListData(imput);
     
     esPrimeraLinea = true;
@@ -381,6 +358,34 @@ catch (JSONException e) {
         
     }//GEN-LAST:event_jButton1MouseClicked
 
+    public String[] analizarResponseJson(boolean esPrimeraLinea,StringBuilder response,String[]imput,int code){
+        // Analiza la respuesta JSON e imprime el campo response"
+JSONObject jsonResponse = new JSONObject(response.toString());
+String responseText = jsonResponse.getString("response");
+//Fragmenta la respuesta a 120 caracteres
+respuestaFragmentada = fragmentarTexto(responseText, 110);
+if(code==HttpURLConnection.HTTP_OK){
+
+// Asigna cada línea fragmentada al vector del JList
+for (String linea : respuestaFragmentada) {
+    // Encuentra la primera posición vacía en el vector 'imput'
+    for (int i = 0; i < imput.length; i++) {
+        if (imput[i] == null) {
+            if (esPrimeraLinea) {
+                imput[i] = "Ollama: " + linea;
+                esPrimeraLinea = false; // Cambia el indicador para evitar que se agregue de nuevo
+            } else {
+                imput[i] = linea;
+    }
+            
+            break;
+}
+    }
+}
+
+}
+return respuestaFragmentada;
+    }
 public void writeConversacionTextFile(String file,boolean esPrimeraLinea,String chat,String[] respuestaFragmentada){
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file,true))) {
             if (chat!=null){
