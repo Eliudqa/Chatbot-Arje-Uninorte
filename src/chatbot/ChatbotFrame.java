@@ -36,6 +36,8 @@ public class ChatbotFrame extends javax.swing.JFrame {
     boolean praentrada = true; // Booleano primera entrada
     public static int cont=0;
     public String projectPath = System.getProperty("user.dir")+"\\";
+    public StringBuilder response;
+    public BufferedReader in;
 
 
 
@@ -279,7 +281,7 @@ for (int i = 0; i < imput.length; i++) {
       
 
     //Debe colocar el modelo correspondiente al que tiene instalado en su computadora local
-    String modelName = "llama3.2:1b";
+    String modelName = "gemma2:2b";
     String promptText = chat;
     sendQuestion(modelName,promptText);
 try {
@@ -310,13 +312,7 @@ try {
 // Obtiene el codigo de respuesta
 int code = conn.getResponseCode();
 
-// Lee el cuerpo de respuesta
-BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-StringBuilder response = new StringBuilder();
-String line;
-while ((line = in.readLine()) != null) {
-    response.append(line);
-}
+response=leerRespuesta(conn);
 in.close();
 
 boolean esPrimeraLinea = true;
@@ -358,6 +354,14 @@ catch (JSONException e) {
         
     }//GEN-LAST:event_jButton1MouseClicked
 
+    public StringBuilder leerRespuesta(HttpURLConnection conn) throws IOException{// Lee el cuerpo de respuesta
+in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+response = new StringBuilder();
+String line;
+while ((line = in.readLine()) != null) {
+    response.append(line);
+} return response;
+    }
     public String[] analizarResponseJson(boolean esPrimeraLinea,StringBuilder response,String[]imput,int code){
         // Analiza la respuesta JSON e imprime el campo response"
 JSONObject jsonResponse = new JSONObject(response.toString());
