@@ -264,6 +264,9 @@ for (int i = 0; i < imput.length; i++) {
 
    return imput;  
  } 
+    public void sendQuestion(String modelName,String prompText){
+        
+    }
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         
         String chat = jTextField1.getText();
@@ -277,6 +280,7 @@ for (int i = 0; i < imput.length; i++) {
     //Debe colocar el modelo correspondiente al que tiene instalado en su computadora local
     String modelName = "llama3.2:1b";
     String promptText = chat;
+    sendQuestion(modelName,promptText);
 try {
             // Configurar la URL y la conexión
             URL url = new URL("http://localhost:11434/api/generate");
@@ -346,34 +350,8 @@ for (String linea : respuestaFragmentada) {
     
     esPrimeraLinea = true;
     String file = projectPath+palabra;        
+    writeConversacionTextFile(file,esPrimeraLinea,chat,respuestaFragmentada);
 
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter(file,true))) {
-            if (chat!=null){
-          writer.write("\nUsuario: " + chat+"\n");
-            }
-        for (String linea : respuestaFragmentada) {
-    // Encuentra la primera posición vacía en el vector 'imput'
-            if (esPrimeraLinea) {
-                writer.write("Ollama: " + linea+"\n");
-                esPrimeraLinea = false; // Cambia el indicador para evitar que se agregue de nuevo
-            } else {
-                writer.write(linea);
-    }
-            
-}
-    
-        
-
-    
-
-    
-} catch (IOException e) {
- String [] errore = new String [10];
-          errore[1]= "Error: Mensaje vacio ";
-          jList2.setListData(errore);    
-          e.printStackTrace(); // Manejo de excepciones
-}
-        
     
     
 
@@ -403,6 +381,35 @@ catch (JSONException e) {
         
     }//GEN-LAST:event_jButton1MouseClicked
 
+public void writeConversacionTextFile(String file,boolean esPrimeraLinea,String chat,String[] respuestaFragmentada){
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file,true))) {
+            if (chat!=null){
+          writer.write("\nUsuario: " + chat+"\n");
+            }
+        for (String linea : respuestaFragmentada) {
+    // Encuentra la primera posición vacía en el vector 'imput'
+            if (esPrimeraLinea) {
+                writer.write("Ollama: " + linea+"\n");
+                esPrimeraLinea = false; // Cambia el indicador para evitar que se agregue de nuevo
+            } else {
+                writer.write(linea);
+    }
+            
+}
+    
+        
+
+    
+
+    
+} catch (IOException e) {
+ String [] errore = new String [10];
+          errore[1]= "Error: Mensaje vacio ";
+          jList2.setListData(errore);    
+          e.printStackTrace(); // Manejo de excepciones
+}
+        
+}
 public void guardarHistorial() {
     try (FileWriter writer = new FileWriter("historial.txt")) {
         for (String message : history) {
