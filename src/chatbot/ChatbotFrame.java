@@ -29,6 +29,7 @@ public class ChatbotFrame extends javax.swing.JFrame {
     String []history;
     String []historial;
     String indice;
+    String[] conversacion;
     public static String palabra="";
     boolean palabraset = false;//Booleano palabra establecida
     boolean praentrada = true; // Booleano primera entrada
@@ -226,10 +227,9 @@ public class ChatbotFrame extends javax.swing.JFrame {
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
 
     }//GEN-LAST:event_jTextField1ActionPerformed
-
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-        String chat = jTextField1.getText();
-        String chat1 = chat.replaceAll("[^a-zA-Z0-9\\s]", "");
+ 
+    public String[] tittleHistory(String chat){
+     String chat1 = chat.replaceAll("[^a-zA-Z0-9\\s]", "");
         String[] words = chat1.split("\\s"); // Divide el texto en palabras
 
 // Solo toma las primeras 3 palabras, sin importar cuántas se ingresen
@@ -262,13 +262,20 @@ for (int i = 0; i < imput.length; i++) {
     }
 }
 
-// Actualiza el JList con el nuevo contenido de 'imput'
-jList2.setListData(imput);
+   return imput;  
+ } 
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        
+        String chat = jTextField1.getText();
+        tittleHistory(chat);
+        
+       // Actualiza el JList con el nuevo contenido de 'imput'
+       jList2.setListData(imput);
 
       
 
     //Debe colocar el modelo correspondiente al que tiene instalado en su computadora local
-    String modelName = "llama3.1";
+    String modelName = "llama3.2:1b";
     String promptText = chat;
 try {
             // Configurar la URL y la conexión
