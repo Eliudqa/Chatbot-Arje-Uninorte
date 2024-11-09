@@ -302,25 +302,25 @@ public class ChatbotFrame extends javax.swing.JFrame {
             }
             palabraset = true; // Marcar 'palabra' como establecida
         }
+// Desplaza los mensajes en `history` hacia abajo una posición de manera optimizada
+for (int k = history.length - 1; k > 0; k--) {
+    history[k] = history[k - 1]; // Desplaza cada mensaje una posición hacia abajo
+}
 
-        for (int i = 0; i < imput.length; i++) {
-            if (imput[i] == null && !chat1.isEmpty()) {
-                if (palabraset && imput[0] == null) {
-                    // Mueve los mensajes existentes en history hacia abajo para crear espacio en la posición [0]
-                    for (int k = history.length - 1; k > 0; k--) {
-                        history[k] = history[k - 1]; // Desplaza cada mensaje una posición hacia abajo
-                    }
+// Inserta el nuevo mensaje en la parte superior del historial y actualiza el JList
+history[0] = palabra;
+guardarHistorial();
+jList1.setListData(history); // Actualiza el JList del historial
 
-                    history[0] = palabra; // Inserta el nuevo mensaje en la parte superior (posición 0)
-                    guardarHistorial();
-                    jList1.setListData(history); // Actualiza el JList del historial
-                }
+// Recorre `imput` para encontrar la primera posición vacía e insertar el mensaje del usuario
+for (int i = 0; i < imput.length; i++) {
+    if (imput[i] == null && !chat1.isEmpty()) {
+        imput[i] = "Usuario: " + chat; // Almacena el mensaje completo en `imput`
+        jTextField1.setText(""); // Limpia el campo de texto
+        break; // Sale del ciclo una vez que se actualiza el JList
+    }
+}
 
-                imput[i] = "Usuario: " + chat; // Almacena el mensaje completo en imput
-                jTextField1.setText(""); // Limpia el campo de texto
-                break; // Sale del ciclo una vez que se actualiza el JList
-            }
-        }
 
         return imput;
     }
