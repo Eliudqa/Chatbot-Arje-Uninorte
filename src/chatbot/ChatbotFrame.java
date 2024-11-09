@@ -14,9 +14,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 /**
@@ -38,7 +41,8 @@ public class ChatbotFrame extends javax.swing.JFrame {
     public String projectPath = System.getProperty("user.dir")+"\\";
     public StringBuilder response;
     public BufferedReader in;
-
+    public HttpURLConnection conn;
+    public String jsonInputString;
 
 
     
@@ -48,14 +52,8 @@ public class ChatbotFrame extends javax.swing.JFrame {
          history = new String [1000];
          historial = new String [1000];
         initComponents();
-        cargarHistorial();     
-
-
-
-
-    
-
-    
+        cargarHistorial();
+        
     }
 
     /**
@@ -267,9 +265,26 @@ for (int i = 0; i < imput.length; i++) {
 
    return imput;  
  } 
-    public void sendQuestion(String modelName,String prompText){
-        
-    }
+
+    /**
+     *
+     * @param modelName
+     * @param promptText
+     * @return
+     * @throws IOException
+     */
+    public HttpURLConnection sendQuestion(String modelName, String promptText) throws IOException {
+        URL url = new URL("tu-url-api-aqui");  // Reemplaza con la URL correcta
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+    
+        // Configura la conexión (método POST, propiedades, etc.)
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json; utf-8");
+        conn.setRequestProperty("Accept", "application/json");
+        conn.setDoOutput(true);  // Necesario para enviar un cuerpo en la solicitud
+    
+    return conn;
+}
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         
         String chat = jTextField1.getText();
@@ -283,7 +298,11 @@ for (int i = 0; i < imput.length; i++) {
     //Debe colocar el modelo correspondiente al que tiene instalado en su computadora local
     String modelName = "gemma2:2b";
     String promptText = chat;
-    sendQuestion(modelName,promptText);
+        try {
+            sendQuestion(modelName,promptText);
+        } catch (IOException ex) {
+            Logger.getLogger(ChatbotFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
 try {
             // Configurar la URL y la conexión
             URL url = new URL("http://localhost:11434/api/generate");
@@ -476,7 +495,29 @@ public void cargarHistorial() {
     }
     }       
    }
+    
+   public String solicitudJson(String modelName, String promptText){
+         // Crear el cuerpo de la solicitud JSON
+            String jsonInputString = String.format(
+        "{ \"model\": \"%s\", \"prompt\": \"%s\", \"stream\": false }",
+        modelName, promptText);
+            
+            return jsonInputString;
+    }
    
+    public HttpURLConnection sendQuestion(String modelName, String promptText, boolean secureConnection) throws MalformedURLException, ProtocolException, IOException {
+        HttpURLConnection conn;
+        URL url = new URL("http://localhost:11434/api/generate");
+        conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json; utf-8");
+        conn.setRequestProperty("Accept", "application/json");
+        conn.setDoOutput(true);
+        conn.setConnectTimeout(60000); // Tiempo de espera para conectar (1min)
+        conn.setReadTimeout(60000); // Tiempo de espera para leer la respuesta (1min)
+
+    return conn;
+}
 
     private void jTextField1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField1MouseClicked
                 jTextField1.setText("");
@@ -500,48 +541,67 @@ public void cargarHistorial() {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
-        String selected=jList1.getSelectedValue();
-        String ruta = projectPath+selected;
-        int contlin=0;          
-       try (BufferedReader reader = new BufferedReader(new FileReader(ruta))) {
-    while (reader.readLine() != null) {
-        contlin++;
-    }
-} catch (IOException e) {
-    e.printStackTrace();
-    String[] errorin = new String[10];
-    errorin[1] = "Error al leer el archivo para contar líneas";
-    jList2.setListData(errorin);
+    String chat = jTextField1.getText();
+        tittleHistory(chat);
+        
+       // Actualiza el JList con el nuevo contenido de 'imput'
+       jList2.setListData(imput);
+      
+
+    //Debe colocar el modelo correspondiente al que tiene instalado en su computadora local
+    String modelName = "llama3.2:1b";
+    String promptText = chat;
+    
+    
+        try {
+            conn = sendQuestion(modelName,promptText); //Metodo para enviar configurar la url y hacer la conexion con la Api
+            jsonInputString=solicitudJson(modelName,promptText); //Metodo para enviar la pregunta en forma de Json y todas las especificaciones
+            
+            try (OutputStream os = conn.getOutputStream()) {
+    byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
+    os.write(input, 0, input.length);
 }
-       
-// Inicializa el array "texto" con el tamaño contlin
 
-    String []texto = new String[contlin];
+    // Obtiene el codigo de respuesta
+    int code = conn.getResponseCode();
+    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+    response=leerRespuesta(conn,in);
+    in.close();
 
-if (contlin < 0) {
-    String[] errorin = new String[10];
-    errorin[1] = "El archivo está vacío";
-    jList2.setListData(errorin);
-    return; // Salir del método si el archivo está vacío
+    boolean esPrimeraLinea = true;
+
+
+    respuestaFragmentada=analizarResponseJson(esPrimeraLinea,response,imput,code);
+    jList2.setListData(imput);
+    
+    esPrimeraLinea = true;
+    String file = projectPath+palabra;        
+    writeConversacionTextFile(file,esPrimeraLinea,chat,respuestaFragmentada);  
+
+    // Cerrar la conexion
+    conn.disconnect();
+
+        } catch (ProtocolException ex) {
+            String [] timeout = new String [10];
+    timeout[1]  = "El tiempo de espera para la conexión fue superado.";
+    jList2.setListData(timeout);
+        } catch (IOException ex) {
+            String [] error = new String [10];
+          error[1]= "Error en ala conexion con la api";
+          jList2.setListData(error);
+          
+     
+
+    
+ 
+        
+        }
+          catch (JSONException e) {
+          String [] errorin = new String [10];
+           errorin[1]="Se produjo un error inesperado";
+           jList2.setListData(errorin);
+
 }
-// Segundo bloque: Leer el contenido del archivo y almacenarlo en "texto"
-try (BufferedReader reader2 = new BufferedReader(new FileReader(ruta))) {
-    String linea;
-    int i = 0;
-    while ((linea = reader2.readLine()) != null && i < contlin) {
-        texto[i] = linea;
-        i++;
-    }
-
-    // Establecer el contenido del array "texto" en el JList
-    jList2.setListData(texto);
-} catch (IOException e) {
-    e.printStackTrace();
-    String[] errorin = new String[10];
-    errorin[1] = "Error al leer el archivo";
-    jList2.setListData(errorin);
-}        
-
     }//GEN-LAST:event_jList1MouseClicked
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
@@ -622,4 +682,8 @@ try (BufferedReader reader2 = new BufferedReader(new FileReader(ruta))) {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
+
+    private StringBuilder leerRespuesta(HttpURLConnection conn, BufferedReader in) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
