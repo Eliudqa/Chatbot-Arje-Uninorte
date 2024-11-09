@@ -37,6 +37,7 @@ public class ChatbotFrame extends javax.swing.JFrame {
     boolean praentrada = true; // Booleano primera entrada
     public static int cont = 0;
     public String projectPath = System.getProperty("user.dir") + "\\";
+    public boolean isHistorialVisible = true;
 
     public ChatbotFrame() {
         setIconImage(new ImageIcon(getClass().getResource("/Images/logo.png")).getImage());
@@ -69,6 +70,7 @@ public class ChatbotFrame extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
+        verHistorial = new javax.swing.JButton();
 
         jButton4.setBackground(new java.awt.Color(153, 153, 153));
         jButton4.setText("Borrar historial");
@@ -206,13 +208,29 @@ public class ChatbotFrame extends javax.swing.JFrame {
             }
         });
 
+        verHistorial.setBackground(new java.awt.Color(153, 153, 153));
+        verHistorial.setText("Ocultar Historial");
+        verHistorial.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        verHistorial.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                verHistorialMouseClicked(evt);
+            }
+        });
+        verHistorial.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                verHistorialActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
+                    .addComponent(verHistorial, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -242,7 +260,9 @@ public class ChatbotFrame extends javax.swing.JFrame {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jButton2)
                         .addComponent(jButton3))
-                    .addComponent(jButton6))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton6)
+                        .addComponent(verHistorial)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -643,6 +663,25 @@ public class ChatbotFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton6ActionPerformed
 
+    private void verHistorialMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_verHistorialMouseClicked
+        // Alterna el estado de visibilidad del historial
+        isHistorialVisible = !isHistorialVisible;
+        jList1.setVisible(isHistorialVisible); // Cambia la visibilidad del JList
+
+        // Cambia el texto del botón dependiendo del estado de visibilidad
+        if (isHistorialVisible) {
+            verHistorial.setText("Ocultar Historial");
+        } else {
+            verHistorial.setText("Ver Historial");
+        }
+
+        // TODO add your handling code here:
+    }//GEN-LAST:event_verHistorialMouseClicked
+
+    private void verHistorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verHistorialActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_verHistorialActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -690,5 +729,6 @@ public class ChatbotFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JButton verHistorial;
     // End of variables declaration//GEN-END:variables
 }
