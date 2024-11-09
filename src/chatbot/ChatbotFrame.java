@@ -4,7 +4,6 @@
  */
 package chatbot;
 
-
 import javax.swing.ImageIcon;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -17,43 +16,37 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import javax.swing.JOptionPane;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 /**
  *
  * @author HOLA
  */
 public class ChatbotFrame extends javax.swing.JFrame {
 
-    String []imput;
-    String []history;
-    String []historial;
+    String[] imput;
+    String[] history;
+    String[] historial;
     String indice;
     String[] conversacion;
     String[] respuestaFragmentada;
-    public static String palabra="";
+    public static String palabra = "";
     boolean palabraset = false;//Booleano palabra establecida
     boolean praentrada = true; // Booleano primera entrada
-    public static int cont=0;
-    public String projectPath = System.getProperty("user.dir")+"\\";
+    public static int cont = 0;
+    public String projectPath = System.getProperty("user.dir") + "\\";
+    public boolean isHistorialVisible = true;
 
-
-
-    
     public ChatbotFrame() {
-    setIconImage(new ImageIcon(getClass().getResource("/Images/logo.png")).getImage());
-         imput = new String[1000];
-         history = new String [1000];
-         historial = new String [1000];
+        setIconImage(new ImageIcon(getClass().getResource("/Images/logo.png")).getImage());
+        imput = new String[1000];
+        history = new String[1000];
+        historial = new String[1000];
         initComponents();
-        cargarHistorial();     
+        cargarHistorial();
 
-
-
-
-    
-
-    
     }
 
     /**
@@ -65,6 +58,8 @@ public class ChatbotFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -74,6 +69,36 @@ public class ChatbotFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        verHistorial = new javax.swing.JButton();
+
+        jButton4.setBackground(new java.awt.Color(153, 153, 153));
+        jButton4.setText("Borrar historial");
+        jButton4.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton4MouseClicked(evt);
+            }
+        });
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jButton5.setBackground(new java.awt.Color(153, 153, 153));
+        jButton5.setText("Borrar historial");
+        jButton5.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton5MouseClicked(evt);
+            }
+        });
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ARJE");
@@ -169,15 +194,54 @@ public class ChatbotFrame extends javax.swing.JFrame {
             }
         });
 
+        jButton6.setBackground(new java.awt.Color(153, 153, 153));
+        jButton6.setText("Limpiar Chat");
+        jButton6.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton6MouseClicked(evt);
+            }
+        });
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
+        verHistorial.setBackground(new java.awt.Color(153, 153, 153));
+        verHistorial.setText("Ocultar Historial");
+        verHistorial.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        verHistorial.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                verHistorialMouseClicked(evt);
+            }
+        });
+        verHistorial.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                verHistorialActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
+                    .addComponent(verHistorial, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addGap(173, 173, 173)
+                        .addComponent(jButton3)
+                        .addGap(39, 39, 39)
+                        .addComponent(jButton2)
+                        .addGap(38, 38, 38))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jTextField1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -186,14 +250,6 @@ public class ChatbotFrame extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 738, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(20, Short.MAX_VALUE))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(173, 173, 173)
-                .addComponent(jButton3)
-                .addGap(39, 39, 39)
-                .addComponent(jButton2)
-                .addGap(38, 38, 38))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -203,7 +259,10 @@ public class ChatbotFrame extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jButton2)
-                        .addComponent(jButton3)))
+                        .addComponent(jButton3))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton6)
+                        .addComponent(verHistorial)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -219,70 +278,69 @@ public class ChatbotFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
+
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
      }//GEN-LAST:event_jButton1ActionPerformed
 
-   
+
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
 
     }//GEN-LAST:event_jTextField1ActionPerformed
- 
-    public String[] tittleHistory(String chat){
-     String chat1 = chat.replaceAll("[^a-zA-Z0-9\\s]", "");
+
+    public String[] tittleHistory(String chat) {
+        String chat1 = chat.replaceAll("[^a-zA-Z0-9\\s]", "");
         String[] words = chat1.split("\\s"); // Divide el texto en palabras
 
 // Solo toma las primeras 3 palabras, sin importar cuántas se ingresen
-if (!palabraset && words.length > 0) {
-    for (int j = 0; j < words.length && j < 5; j++) {
-        if (!palabra.isEmpty()) {
-            palabra += " "; // Agregar un espacio entre las palabras
-        }
-        palabra += words[j]; // Agregar la palabra actual a 'palabra'
-    }
-    palabraset = true; // Marcar 'palabra' como establecida
-}
-
-for (int i = 0; i < imput.length; i++) {
-    if (imput[i] == null && !chat1.isEmpty()) {
-        if (palabraset && imput[0] == null) {
-            // Mueve los mensajes existentes en history hacia abajo para crear espacio en la posición [0]
-            for (int k = history.length - 1; k > 0; k--) {
-                history[k] = history[k - 1]; // Desplaza cada mensaje una posición hacia abajo
+        if (!palabraset && words.length > 0) {
+            for (int j = 0; j < words.length && j < 5; j++) {
+                if (!palabra.isEmpty()) {
+                    palabra += " "; // Agregar un espacio entre las palabras
+                }
+                palabra += words[j]; // Agregar la palabra actual a 'palabra'
             }
-
-            history[0] = palabra; // Inserta el nuevo mensaje en la parte superior (posición 0)
-            guardarHistorial();
-            jList1.setListData(history); // Actualiza el JList del historial
+            palabraset = true; // Marcar 'palabra' como establecida
         }
 
-        imput[i] = "Usuario: " + chat; // Almacena el mensaje completo en imput
-        jTextField1.setText(""); // Limpia el campo de texto
-        break; // Sale del ciclo una vez que se actualiza el JList
-    }
-}
+        for (int i = 0; i < imput.length; i++) {
+            if (imput[i] == null && !chat1.isEmpty()) {
+                if (palabraset && imput[0] == null) {
+                    // Mueve los mensajes existentes en history hacia abajo para crear espacio en la posición [0]
+                    for (int k = history.length - 1; k > 0; k--) {
+                        history[k] = history[k - 1]; // Desplaza cada mensaje una posición hacia abajo
+                    }
 
-   return imput;  
- } 
-    public void sendQuestion(String modelName,String prompText){
-        
+                    history[0] = palabra; // Inserta el nuevo mensaje en la parte superior (posición 0)
+                    guardarHistorial();
+                    jList1.setListData(history); // Actualiza el JList del historial
+                }
+
+                imput[i] = "Usuario: " + chat; // Almacena el mensaje completo en imput
+                jTextField1.setText(""); // Limpia el campo de texto
+                break; // Sale del ciclo una vez que se actualiza el JList
+            }
+        }
+
+        return imput;
+    }
+
+    public void sendQuestion(String modelName, String prompText) {
+
     }
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-        
+
         String chat = jTextField1.getText();
         tittleHistory(chat);
-        
-       // Actualiza el JList con el nuevo contenido de 'imput'
-       jList2.setListData(imput);
 
-      
+        // Actualiza el JList con el nuevo contenido de 'imput'
+        jList2.setListData(imput);
 
-    //Debe colocar el modelo correspondiente al que tiene instalado en su computadora local
-    String modelName = "llama3.2:1b";
-    String promptText = chat;
-    sendQuestion(modelName,promptText);
-try {
+        //Debe colocar el modelo correspondiente al que tiene instalado en su computadora local
+        String modelName = "llama3.2:1b";
+        String promptText = chat;
+        sendQuestion(modelName, promptText);
+        try {
             // Configurar la URL y la conexión
             URL url = new URL("http://localhost:11434/api/generate");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -292,190 +350,178 @@ try {
             conn.setDoOutput(true);
             conn.setConnectTimeout(60000); // Tiempo de espera para conectar (1min)
             conn.setReadTimeout(60000); // Tiempo de espera para leer la respuesta(1min)
-    
 
             // Crear el cuerpo de la solicitud JSON
             String jsonInputString = String.format(
-        "{ \"model\": \"%s\", \"prompt\": \"%s\", \"stream\": false }",
-        modelName, promptText);
-
-
-
+                    "{ \"model\": \"%s\", \"prompt\": \"%s\", \"stream\": false }",
+                    modelName, promptText);
 
             try (OutputStream os = conn.getOutputStream()) {
-    byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
-    os.write(input, 0, input.length);
-}
+                byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
 
 // Obtiene el codigo de respuesta
-int code = conn.getResponseCode();
+            int code = conn.getResponseCode();
 
 // Lee el cuerpo de respuesta
-BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-StringBuilder response = new StringBuilder();
-String line;
-while ((line = in.readLine()) != null) {
-    response.append(line);
-}
-in.close();
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = in.readLine()) != null) {
+                response.append(line);
+            }
+            in.close();
 
-boolean esPrimeraLinea = true;
+            boolean esPrimeraLinea = true;
 
+            respuestaFragmentada = analizarResponseJson(esPrimeraLinea, response, imput, code);
+            jList2.setListData(imput);
 
-    respuestaFragmentada=analizarResponseJson(esPrimeraLinea,response,imput,code);
-    jList2.setListData(imput);
-    
-    esPrimeraLinea = true;
-    String file = projectPath+palabra;        
-    writeConversacionTextFile(file,esPrimeraLinea,chat,respuestaFragmentada);
-
-    
-    
-
+            esPrimeraLinea = true;
+            String file = projectPath + palabra;
+            writeConversacionTextFile(file, esPrimeraLinea, chat, respuestaFragmentada);
 
 // Cerrar la conexion
-conn.disconnect();
-} catch (SocketTimeoutException e) {
-    String [] timeout = new String [10];
-    timeout[1]  = "El tiempo de espera para la conexión fue superado.";
-    jList2.setListData(timeout);
+            conn.disconnect();
+        } catch (SocketTimeoutException e) {
+            String[] timeout = new String[10];
+            timeout[1] = "El tiempo de espera para la conexión fue superado.";
+            jList2.setListData(timeout);
 
-    
-    // Agregar timeoutMessage a tu JList
+            // Agregar timeoutMessage a tu JList
         } catch (IOException e) {
-          String [] error = new String [10];
-          error[1]= "Error de conexion: " + e.getMessage();
-          jList2.setListData(error);
-        }
-catch (JSONException e) {
-    String [] errorin = new String [10];
-          errorin[1]="Se produjo un error inesperado";
-           jList2.setListData(errorin);
+            String[] error = new String[10];
+            error[1] = "Error de conexion: " + e.getMessage();
+            jList2.setListData(error);
+        } catch (JSONException e) {
+            String[] errorin = new String[10];
+            errorin[1] = "Se produjo un error inesperado";
+            jList2.setListData(errorin);
 
-}
-    
-    
-        
+        }
+
+
     }//GEN-LAST:event_jButton1MouseClicked
 
-    public String[] analizarResponseJson(boolean esPrimeraLinea,StringBuilder response,String[]imput,int code){
+    public String[] analizarResponseJson(boolean esPrimeraLinea, StringBuilder response, String[] imput, int code) {
         // Analiza la respuesta JSON e imprime el campo response"
-JSONObject jsonResponse = new JSONObject(response.toString());
-String responseText = jsonResponse.getString("response");
+        JSONObject jsonResponse = new JSONObject(response.toString());
+        String responseText = jsonResponse.getString("response");
 //Fragmenta la respuesta a 120 caracteres
-respuestaFragmentada = fragmentarTexto(responseText, 110);
-if(code==HttpURLConnection.HTTP_OK){
+        respuestaFragmentada = fragmentarTexto(responseText, 110);
+        if (code == HttpURLConnection.HTTP_OK) {
 
 // Asigna cada línea fragmentada al vector del JList
-for (String linea : respuestaFragmentada) {
-    // Encuentra la primera posición vacía en el vector 'imput'
-    for (int i = 0; i < imput.length; i++) {
-        if (imput[i] == null) {
-            if (esPrimeraLinea) {
-                imput[i] = "Ollama: " + linea;
-                esPrimeraLinea = false; // Cambia el indicador para evitar que se agregue de nuevo
-            } else {
-                imput[i] = linea;
-    }
-            
-            break;
-}
-    }
-}
+            for (String linea : respuestaFragmentada) {
+                // Encuentra la primera posición vacía en el vector 'imput'
+                for (int i = 0; i < imput.length; i++) {
+                    if (imput[i] == null) {
+                        if (esPrimeraLinea) {
+                            imput[i] = "Ollama: " + linea;
+                            esPrimeraLinea = false; // Cambia el indicador para evitar que se agregue de nuevo
+                        } else {
+                            imput[i] = linea;
+                        }
 
-}
-return respuestaFragmentada;
-    }
-public void writeConversacionTextFile(String file,boolean esPrimeraLinea,String chat,String[] respuestaFragmentada){
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file,true))) {
-            if (chat!=null){
-          writer.write("\nUsuario: " + chat+"\n");
-            }
-        for (String linea : respuestaFragmentada) {
-    // Encuentra la primera posición vacía en el vector 'imput'
-            if (esPrimeraLinea) {
-                writer.write("Ollama: " + linea+"\n");
-                esPrimeraLinea = false; // Cambia el indicador para evitar que se agregue de nuevo
-            } else {
-                writer.write(linea);
-    }
-            
-}
-    
-        
-
-    
-
-    
-} catch (IOException e) {
- String [] errore = new String [10];
-          errore[1]= "Error: Mensaje vacio ";
-          jList2.setListData(errore);    
-          e.printStackTrace(); // Manejo de excepciones
-}
-        
-}
-public void guardarHistorial() {
-    try (FileWriter writer = new FileWriter("historial.txt")) {
-        for (String message : history) {
-            if (message != null) {
-                writer.write(message + "\n");
-            }
+                        break;
                     }
-    } catch (IOException e) {
-String [] errorin = new String [10];
-          errorin[1]="Se produjo al guardar el Historial";
-           jList2.setListData(errorin);    }
-}
+                }
+            }
 
-public void cargarHistorial() {
-    try (BufferedReader reader = new BufferedReader(new FileReader("historial.txt"))) {
-        String line;
-        int index = 0;
-        while ((line = reader.readLine()) != null && index < history.length) {
-            history[index] = line;
-            index++;
-            System.out.println(line);
         }
-        jList1.setListData(history); // Actualizar el JList con el historial cargado
-        
-    } catch (IOException e) {
-        e.printStackTrace();
+        return respuestaFragmentada;
     }
-}
-   private String[] fragmentarTexto(String texto, int maxCaracteres) {
-    // Calcula cuántas líneas se necesitan
-    int numLineas = (int) Math.ceil((double) texto.length() / maxCaracteres);
-    String[] lineas = new String[numLineas];
-    
-    for (int i = 0; i < numLineas; i++) {
-        int inicio = i * maxCaracteres;
-        int fin = Math.min(inicio + maxCaracteres, texto.length());
-        lineas[i] = texto.substring(inicio, fin);
-    }
-    return lineas;
-    
-}
-   private void borrarHistorial() 
-           throws IOException{
-           try (FileWriter writer = new FileWriter("historial.txt")) {
-       try (BufferedReader reader = new BufferedReader(new FileReader("historial.txt"))) {
-        String line;
-        int index = 0;
-        while ((line = reader.readLine()) != null && index < history.length) {
-          writer.write("");
-          history[index]="";
-            index++;
+
+    public void writeConversacionTextFile(String file, boolean esPrimeraLinea, String chat, String[] respuestaFragmentada) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+            if (chat != null) {
+                writer.write("\nUsuario: " + chat + "\n");
+            }
+            for (String linea : respuestaFragmentada) {
+                // Encuentra la primera posición vacía en el vector 'imput'
+                if (esPrimeraLinea) {
+                    writer.write("Ollama: " + linea + "\n");
+                    esPrimeraLinea = false; // Cambia el indicador para evitar que se agregue de nuevo
+                } else {
+                    writer.write(linea);
+                }
+
+            }
+
+        } catch (IOException e) {
+            String[] errore = new String[10];
+            errore[1] = "Error: Mensaje vacio ";
+            jList2.setListData(errore);
+            e.printStackTrace(); // Manejo de excepciones
         }
-    } catch (IOException e) {
-        e.printStackTrace();
+
     }
-    }       
-   }
-   
+
+    public void guardarHistorial() {
+        try (FileWriter writer = new FileWriter("historial.txt")) {
+            for (String message : history) {
+                if (message != null) {
+                    writer.write(message + "\n");
+                }
+            }
+        } catch (IOException e) {
+            String[] errorin = new String[10];
+            errorin[1] = "Se produjo al guardar el Historial";
+            jList2.setListData(errorin);
+        }
+    }
+
+    public void cargarHistorial() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("historial.txt"))) {
+            String line;
+            int index = 0;
+            while ((line = reader.readLine()) != null && index < history.length) {
+                history[index] = line;
+                index++;
+                System.out.println(line);
+            }
+            jList1.setListData(history); // Actualizar el JList con el historial cargado
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String[] fragmentarTexto(String texto, int maxCaracteres) {
+        // Calcula cuántas líneas se necesitan
+        int numLineas = (int) Math.ceil((double) texto.length() / maxCaracteres);
+        String[] lineas = new String[numLineas];
+
+        for (int i = 0; i < numLineas; i++) {
+            int inicio = i * maxCaracteres;
+            int fin = Math.min(inicio + maxCaracteres, texto.length());
+            lineas[i] = texto.substring(inicio, fin);
+        }
+        return lineas;
+
+    }
+
+    private void borrarHistorial()
+            throws IOException {
+        try (FileWriter writer = new FileWriter("historial.txt")) {
+            try (BufferedReader reader = new BufferedReader(new FileReader("historial.txt"))) {
+                String line;
+                int index = 0;
+                while ((line = reader.readLine()) != null && index < history.length) {
+                    writer.write("");
+                    history[index] = "";
+                    index++;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     private void jTextField1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField1MouseClicked
-                jTextField1.setText("");
+        jTextField1.setText("");
 
     }//GEN-LAST:event_jTextField1MouseClicked
 
@@ -488,7 +534,7 @@ public void cargarHistorial() {
     }//GEN-LAST:event_jButton1KeyPressed
 
     private void jTextField1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyPressed
-    
+
     }//GEN-LAST:event_jTextField1KeyPressed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -496,82 +542,145 @@ public void cargarHistorial() {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
-        String selected=jList1.getSelectedValue();
-        String ruta = projectPath+selected;
-        int contlin=0;          
-       try (BufferedReader reader = new BufferedReader(new FileReader(ruta))) {
-    while (reader.readLine() != null) {
-        contlin++;
-    }
-} catch (IOException e) {
-    e.printStackTrace();
-    String[] errorin = new String[10];
-    errorin[1] = "Error al leer el archivo para contar líneas";
-    jList2.setListData(errorin);
-}
-       
+        String selected = jList1.getSelectedValue();
+        String ruta = projectPath + selected;
+        int contlin = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader(ruta))) {
+            while (reader.readLine() != null) {
+                contlin++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            String[] errorin = new String[10];
+            errorin[1] = "Error al leer el archivo para contar líneas";
+            jList2.setListData(errorin);
+        }
+
 // Inicializa el array "texto" con el tamaño contlin
+        String[] texto = new String[contlin];
 
-    String []texto = new String[contlin];
-
-if (contlin < 0) {
-    String[] errorin = new String[10];
-    errorin[1] = "El archivo está vacío";
-    jList2.setListData(errorin);
-    return; // Salir del método si el archivo está vacío
-}
+        if (contlin < 0) {
+            String[] errorin = new String[10];
+            errorin[1] = "El archivo está vacío";
+            jList2.setListData(errorin);
+            return; // Salir del método si el archivo está vacío
+        }
 // Segundo bloque: Leer el contenido del archivo y almacenarlo en "texto"
-try (BufferedReader reader2 = new BufferedReader(new FileReader(ruta))) {
-    String linea;
-    int i = 0;
-    while ((linea = reader2.readLine()) != null && i < contlin) {
-        texto[i] = linea;
-        i++;
-    }
+        try (BufferedReader reader2 = new BufferedReader(new FileReader(ruta))) {
+            String linea;
+            int i = 0;
+            while ((linea = reader2.readLine()) != null && i < contlin) {
+                texto[i] = linea;
+                i++;
+            }
 
-    // Establecer el contenido del array "texto" en el JList
-    jList2.setListData(texto);
-} catch (IOException e) {
-    e.printStackTrace();
-    String[] errorin = new String[10];
-    errorin[1] = "Error al leer el archivo";
-    jList2.setListData(errorin);
-}        
+            // Establecer el contenido del array "texto" en el JList
+            jList2.setListData(texto);
+        } catch (IOException e) {
+            e.printStackTrace();
+            String[] errorin = new String[10];
+            errorin[1] = "Error al leer el archivo";
+            jList2.setListData(errorin);
+        }
 
     }//GEN-LAST:event_jList1MouseClicked
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
-            jList2.setListData(new String[0]);
-            palabraset = false;
-            praentrada = true;
-            imput = new String[1000];  //Reinicia el imput para una nueva conversacion
-            historial = new String[1000];  // Reinicia el historial de la conversación actual (Documento totalmente nuevo)
-            palabra="";
-           
-            
+        jList2.setListData(new String[0]);
+        palabraset = false;
+        praentrada = true;
+        imput = new String[1000];  //Reinicia el imput para una nueva conversacion
+        historial = new String[1000];  // Reinicia el historial de la conversación actual (Documento totalmente nuevo)
+        palabra = "";
+
 
                    }//GEN-LAST:event_jButton2MouseClicked
 
     private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
         try {
             borrarHistorial();
-        } 
-        catch (IOException ex) {
+        } catch (IOException ex) {
             String[] errorin = new String[10];
-    errorin[1] = "Error al borrar el historial";
-    jList2.setListData(errorin);
+            errorin[1] = "Error al borrar el historial";
+            jList2.setListData(errorin);
         }
-        
-      jList1.setListData(new String[0]); // Actualizar el JList a vacio
-      jList2.setListData(new String[0]);
+
+        jList1.setListData(new String[0]); // Actualizar el JList a vacio
+        jList2.setListData(new String[0]);
 
 
-       
     }//GEN-LAST:event_jButton3MouseClicked
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton4MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton4MouseClicked
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton5MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton5MouseClicked
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton6MouseClicked
+        // TODO add your handling code here:
+        // Obtener el índice seleccionado en el historial (JList de historial)
+        int selectedIndex = jList1.getSelectedIndex(); // jList1 es el JList que muestra el historial
+
+        // Verifica si hay una conversación seleccionada
+        if (selectedIndex != -1) {
+            // Eliminar la conversación del vector de historial en la posición seleccionada
+            history[selectedIndex] = null; // Borra el contenido en el vector del historial
+            for (int i = selectedIndex; i < history.length - 1; i++) {
+                history[i] = history[i + 1]; // Mueve los elementos hacia arriba para llenar el espacio vacío
+            }
+            history[history.length - 1] = null; // Asegúrate de que el último elemento esté vacío
+
+            // Actualizar el JList del historial
+            jList1.setListData(history);
+
+            // Limpia el JList de la conversación actual
+            for (int i = 0; i < imput.length; i++) {
+                imput[i] = null; // Borra todo en el vector de la conversación actual
+            }
+            jList2.setListData(imput); // Actualiza el JList de la conversación
+
+            // Mensaje de confirmación (opcional)
+            JOptionPane.showMessageDialog(null, "Conversación eliminada.");
+        }
+    }//GEN-LAST:event_jButton6MouseClicked
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void verHistorialMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_verHistorialMouseClicked
+        // Alterna el estado de visibilidad del historial
+        isHistorialVisible = !isHistorialVisible;
+        jList1.setVisible(isHistorialVisible); // Cambia la visibilidad del JList
+
+        // Cambia el texto del botón dependiendo del estado de visibilidad
+        if (isHistorialVisible) {
+            verHistorial.setText("Ocultar Historial");
+        } else {
+            verHistorial.setText("Ver Historial");
+        }
+
+        // TODO add your handling code here:
+    }//GEN-LAST:event_verHistorialMouseClicked
+
+    private void verHistorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verHistorialActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_verHistorialActionPerformed
 
     /**
      * @param args the command line arguments
@@ -611,11 +720,15 @@ try (BufferedReader reader2 = new BufferedReader(new FileReader(ruta))) {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JList<String> jList1;
     private javax.swing.JList<String> jList2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JButton verHistorial;
     // End of variables declaration//GEN-END:variables
 }
