@@ -47,6 +47,7 @@ public class ChatbotFrame extends javax.swing.JFrame {
         initComponents();
         cargarHistorial();
 
+        
     }
 
     /**
@@ -337,7 +338,7 @@ for (int i = 0; i < imput.length; i++) {
         jList2.setListData(imput);
 
         //Debe colocar el modelo correspondiente al que tiene instalado en su computadora local
-        String modelName = "llama3.2:1b";
+        String modelName = "Gemma2:2b";
         String promptText = chat;
         sendQuestion(modelName, promptText);
         try {
