@@ -13,9 +13,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,6 +42,10 @@ public class ChatbotFrame extends javax.swing.JFrame {
     public static int cont = 0;
     public String projectPath = System.getProperty("user.dir") + "\\";
     public boolean isHistorialVisible = true;
+    public HttpURLConnection conn;
+    public String jsonInputString;
+    BufferedReader in;
+    StringBuilder response;
 
     public ChatbotFrame() {
         setIconImage(new ImageIcon(getClass().getResource("/Images/logo.png")).getImage());
@@ -324,82 +332,108 @@ for (int i = 0; i < imput.length; i++) {
 
         return imput;
     }
-
-    public void sendQuestion(String modelName, String prompText) {
-
+    
+    public String solicitudJson(String modelName, String promptText){
+         // Crear el cuerpo de la solicitud JSON
+            jsonInputString = String.format(
+        "{ \"model\": \"%s\", \"prompt\": \"%s\", \"stream\": false }",
+        modelName, promptText);
+            
+            return jsonInputString;
     }
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
 
-        String chat = jTextField1.getText();
-        tittleHistory(chat);
-
-        // Actualiza el JList con el nuevo contenido de 'imput'
-        jList2.setListData(imput);
-
-        //Debe colocar el modelo correspondiente al que tiene instalado en su computadora local
-        String modelName = "llama3.2:1b";
-        String promptText = chat;
-        sendQuestion(modelName, promptText);
-        try {
-            // Configurar la URL y la conexión
+    public HttpURLConnection sendQuestion(String modelName,String promptText) throws MalformedURLException, ProtocolException, IOException{
+        // Configurar la URL y la conexión
             URL url = new URL("http://localhost:11434/api/generate");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json; utf-8");
             conn.setRequestProperty("Accept", "application/json");
             conn.setDoOutput(true);
             conn.setConnectTimeout(60000); // Tiempo de espera para conectar (1min)
             conn.setReadTimeout(60000); // Tiempo de espera para leer la respuesta(1min)
+    
 
-            // Crear el cuerpo de la solicitud JSON
-            String jsonInputString = String.format(
-                    "{ \"model\": \"%s\", \"prompt\": \"%s\", \"stream\": false }",
-                    modelName, promptText);
-
-            try (OutputStream os = conn.getOutputStream()) {
-                byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
+           
+            return conn;
+                
             }
+    
+    public StringBuilder leerRespuesta(HttpURLConnection conn) throws IOException, IOException{// Lee el cuerpo de respuesta
+ in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+ response = new StringBuilder();
+String line;
+while ((line = in.readLine()) != null) {
+    response.append(line);
+       
+    }
+    
+ return response;
+    }
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+
+  String chat = jTextField1.getText();
+        tittleHistory(chat);
+        
+       // Actualiza el JList con el nuevo contenido de 'imput'
+       jList2.setListData(imput);
+      
+
+    //Debe colocar el modelo correspondiente al que tiene instalado en su computadora local
+    String modelName = "llama3.2:1b";
+    String promptText = chat;
+    
+    
+        try {
+            conn= sendQuestion(modelName,promptText); //Metodo para enviar configurar la url y hacer la conexion con la Api
+            jsonInputString=solicitudJson(modelName,promptText); //Metodo para enviar la pregunta en forma de Json y todas las especificaciones
+            
+            try (OutputStream os = conn.getOutputStream()) {
+    byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
+    os.write(input, 0, input.length);
+}
 
 // Obtiene el codigo de respuesta
-            int code = conn.getResponseCode();
+int code = conn.getResponseCode();
+ in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+response=leerRespuesta(conn);
+in.close();
 
-// Lee el cuerpo de respuesta
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = in.readLine()) != null) {
-                response.append(line);
-            }
-            in.close();
+boolean esPrimeraLinea = true;
 
-            boolean esPrimeraLinea = true;
 
-            respuestaFragmentada = analizarResponseJson(esPrimeraLinea, response, imput, code);
-            jList2.setListData(imput);
-
-            esPrimeraLinea = true;
-            String file = projectPath + palabra;
-            writeConversacionTextFile(file, esPrimeraLinea, chat, respuestaFragmentada);
+    respuestaFragmentada=analizarResponseJson(esPrimeraLinea,response,imput,code);
+    jList2.setListData(imput);
+    
+    esPrimeraLinea = true;
+    String file = projectPath+palabra;        
+    writeConversacionTextFile(file,esPrimeraLinea,chat,respuestaFragmentada);  
 
 // Cerrar la conexion
-            conn.disconnect();
-        } catch (SocketTimeoutException e) {
-            String[] timeout = new String[10];
-            timeout[1] = "El tiempo de espera para la conexión fue superado.";
-            jList2.setListData(timeout);
+conn.disconnect();
 
-            // Agregar timeoutMessage a tu JList
-        } catch (IOException e) {
-            String[] error = new String[10];
-            error[1] = "Error de conexion: " + e.getMessage();
-            jList2.setListData(error);
-        } catch (JSONException e) {
-            String[] errorin = new String[10];
-            errorin[1] = "Se produjo un error inesperado";
-            jList2.setListData(errorin);
+        } catch (ProtocolException ex) {
+            String [] timeout = new String [10];
+    timeout[1]  = "El tiempo de espera para la conexión fue superado.";
+    jList2.setListData(timeout);
+        } catch (IOException ex) {
+            String [] error = new String [10];
+          error[1]= "Error en la conexion con la api";
+          jList2.setListData(error);
+          
+     
 
+    
+ 
+        
         }
+          catch (JSONException e) {
+          String [] errorin = new String [10];
+           errorin[1]="Se produjo un error inesperado";
+           jList2.setListData(errorin);
+
+}
 
 
     }//GEN-LAST:event_jButton1MouseClicked
